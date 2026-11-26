@@ -37,12 +37,13 @@ hydroGOF, lubridate. sf is needed for resampling. Tested with R 4.4.
 
 ## Data
 
-The paper's daily SWE for WY2001–2019 (LRM-FSCA and LRM-baseline) is on Zenodo, DOI *to be added*.
+The paper's daily SWE for WY2001–2019 (LRM-FSCA and LRM-baseline) is on Zenodo: https://doi.org/10.5281/zenodo.24547693.
 That record also has the training data, coefficients, cross-validation statistics and figure inputs.
 
 ## Citation
 
-Please cite the paper above. Software citation metadata are in `CITATION.cff`.
+Please cite the paper above. Each GitHub release of this code is archived on Zenodo with a DOI (see the
+Zenodo badge / release page). Citation metadata are in `CITATION.cff`.
 
 ## License
 

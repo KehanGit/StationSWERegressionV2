@@ -1,0 +1,41 @@
+{
+  "upload_type": "software",
+  "title": "StationSWERegressionV2: linear regression model for daily gridded snow water equivalent",
+  "creators": [
+    {
+      "name": "Yang, Kehan",
+      "orcid": "0000-0003-0319-4739"
+    }
+  ],
+  "description": "<p>R package and analysis code for the linear regression model (LRM) of daily gridded snow water equivalent used in Yang et al. (2022), <i>Advances in Water Resources</i> 160, 104075. Each day an elastic-net regression is trained on snow pillow SWE, with these predictors: physiographic variables, a historical SWE pattern from snow reanalysis, and MODIS fractional snow-covered area. The model is then applied to every grid cell.</p><p>The release has two parts:</p><ul><li>The R package.</li><li>The paper folder (paper/Yang2022_AWR). It holds the model runs, the scripts for Figs. 3–11, the data-release scripts, and the original 2020 scripts.</li></ul><p>It builds on stationsweRegression by Dominik Schneider (MIT).</p>",
+  "license": "MIT",
+  "keywords": [
+    "snow water equivalent",
+    "R",
+    "linear regression",
+    "elastic net",
+    "Sierra Nevada",
+    "snow pillow",
+    "MODIS"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.1016/j.advwatres.2021.104075",
+      "relation": "isSupplementTo",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    },
+    {
+      "identifier": "10.5281/zenodo.24547693",
+      "relation": "isSupplementedBy",
+      "scheme": "doi",
+      "resource_type": "dataset"
+    },
+    {
+      "identifier": "https://github.com/hoargroup/stationsweRegression",
+      "relation": "isDerivedFrom",
+      "scheme": "url",
+      "resource_type": "software"
+    }
+  ]
+}

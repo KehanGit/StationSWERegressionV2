@@ -1,7 +1,11 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite the article below."
 title: "StationSWERegressionV2: real-time snow water equivalent from a linear regression model"
-version: 1.0.0
+version: 1.0.1
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24547693"
+    description: "Dataset: daily LRM SWE, WY2001-2019"
 license: MIT
 repository-code: "https://github.com/KehanGit/StationSWERegressionV2"
 authors:

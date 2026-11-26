@@ -1,6 +1,6 @@
 Package: StationSWERegressionV2
 Title: Real-Time Snow Water Equivalent Estimation by Regressing Station Data on Physiographic and Remote Sensing Predictors
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person("Kehan", "Yang", , "32207757+KehanGit@users.noreply.github.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0319-4739")),

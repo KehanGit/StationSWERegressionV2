@@ -6,7 +6,7 @@
 > https://doi.org/10.1016/j.advwatres.2021.104075
 
 Output data (daily SWE for both models, training data, coefficients, cross-validation statistics):
-Zenodo, DOI *to be added*.
+Zenodo, https://doi.org/10.5281/zenodo.24547693
 
 ## Layout
 
