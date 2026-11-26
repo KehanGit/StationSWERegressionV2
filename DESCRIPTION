@@ -1,0 +1,35 @@
+Package: StationSWERegressionV2
+Title: Real-Time Snow Water Equivalent Estimation by Regressing Station Data on Physiographic and Remote Sensing Predictors
+Version: 1.0.0
+Authors@R: c(
+    person("Kehan", "Yang", , "32207757+KehanGit@users.noreply.github.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0319-4739")),
+    person("Dominik", "Schneider", role = "aut",
+           comment = "Author of the original stationsweRegression package"))
+Description: Daily gridded snow water equivalent (SWE) from an elastic-net linear regression of snow
+    pillow SWE on physiographic variables, a historical SWE pattern from snow reanalysis, and MODIS
+    fractional snow-covered area. Extends Schneider and Molotch (2016) <doi:10.1002/2016WR019067>;
+    used in Yang et al. (2022) <doi:10.1016/j.advwatres.2021.104075>.
+License: MIT + file LICENSE
+Depends:
+    R (>= 4.0),
+    raster,
+    sp,
+    dplyr,
+    tidyr,
+    tibble,
+    purrr,
+    readr,
+    modelr,
+    glmnet,
+    glmnetUtils
+Imports:
+    hydroGOF,
+    lubridate,
+    stats
+Suggests:
+    sf,
+    ncdf4
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1.9000

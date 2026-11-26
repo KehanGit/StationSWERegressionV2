@@ -1,0 +1,21 @@
+.Rproj.user
+.Rhistory
+.RData
+inst/doc
+.DS_Store
+inst/.DS_Store
+./data/*
+data/*
+0preprocess_fSCA/*
+StationSWERegressionV2*tar
+
+
+
+# local data / outputs (archived on Zenodo, not in git)
+paper/Yang2022_AWR/data/
+paper/Yang2022_AWR/output/
+.DS_Store
+._*
+.Rhistory
+.RData
+.Rproj.user/

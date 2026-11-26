@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the article below."
+title: "StationSWERegressionV2: real-time snow water equivalent from a linear regression model"
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/KehanGit/StationSWERegressionV2"
+authors:
+  - family-names: Yang
+    given-names: Kehan
+    orcid: "https://orcid.org/0000-0003-0319-4739"
+preferred-citation:
+  type: article
+  title: "Combining ground-based and remotely sensed snow data in a linear regression model for real-time estimation of snow water equivalent"
+  authors:
+    - family-names: Yang
+      given-names: Kehan
+      orcid: "https://orcid.org/0000-0003-0319-4739"
+    - family-names: Musselman
+      given-names: Keith N.
+    - family-names: Rittger
+      given-names: Karl
+    - family-names: Margulis
+      given-names: Steven A.
+    - family-names: Painter
+      given-names: Thomas H.
+    - family-names: Molotch
+      given-names: Noah P.
+  journal: "Advances in Water Resources"
+  volume: 160
+  start: 104075
+  year: 2022
+  doi: "10.1016/j.advwatres.2021.104075"
+references:
+  - type: software
+    title: "stationsweRegression"
+    authors:
+      - family-names: Schneider
+        given-names: Dominik
+    repository-code: "https://github.com/hoargroup/stationsweRegression"

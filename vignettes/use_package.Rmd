@@ -1,0 +1,145 @@
+---
+title: "Using this package"
+author: "Dominik Schneider"
+date: "`r Sys.Date()`"
+output:	html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using this package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+This document will describe how to set up an R script to run the commands needed to estimate SWE distribution following the methods described in [Schneider and Molotch, 2016](!http://onlinelibrary.wiley.com/doi/10.1002/2016WR019067/full).
+
+Keep in mind that the package was first developed to estimate SWE distribution in the northern Rockies using a step-wise linear regression between SNOTEL observations (dependent variable), and reconstructed SWE and static topographic variables (independent variables). The only difference is that the statistical model from the paper was upgraded from a step-wise linear regression to an elastic-net linear regression. in short, this means that all the predictor variables get used rather than dropping the variables with the lowest predictive ability.
+
+I've tried to make the package so it can be extended to use e.g. MOD10A1 fsca and CADWR station observations with the appropriate changes.
+
+
+## Dependent Variable
+### SWE observations
+
+The package will automatically download the pillow SWE observations from SNOTEL or CDEC.
+
+## Independent Variables 
+### Topographic Variables
+
+The user will need to gather and create the variables needed to model SWE. In short, download a DEM for your region and then compute the terrain variables needed for your model. The package vignette [PHV Inputs](Make_PHV_Inputs.html) describes the default inputs and provides some guidance for creating these.
+
+### fSCA
+
+There are several sources of fSCA that can be used in the model. I used MODSCAG (Painter et al. 2009), which is better than MOD10A1.005 (Rittger et al. 2013). However, you will need to request access from the JPL Snow Team for MODSCAG. For CU Mountain Hydrology members, the historic archive of MODSCAG is located on snowserver and the package can automatically download the necessary files from snowserver (with some setup). 
+
+If you have locally downloaded fsca (from any source), these files can be used if they are in the right format and in the right location (see details below). 
+
+There is no processing performed on the fsca (e.g. cloud removal). It is up to the user to choose dates that have adequately clear skies. You could prescreen the dates at [NASA Worldview site](!https://worldview.earthdata.nasa.gov/). You can also simulate SWE for multiple dates and then select the SWE maps. Keep in mind that the package will automatically assume that the fsca of a pixel containing a SNOTEL station is 100% if the pixel is obscured and the SNOTEL station is reporting SWE > 0. 
+
+### Reconstructed SWE 
+
+Reconstructed SWE (often abbreviated "rcn") from the past can be used to improve real-time SWE estimates. In theory any **independently-derived** spatial SWE map could be used. The regression model will cycle through an ensemble of past spatial SWE estimates and use k-fold cross validation to pick the best past spatial pattern for estimating the current distribution of SWE at the snow pillows. This is a brute-force method and disregrads issues of scale between the reconstructed pixel and the snow pillow.
+
+# Project setup
+
+You should create a working directory from which to run the functions in this package. It should contain
+
+* a directory named `modscag_downloads`
+* a directory named `rcn_<location>`  (only required if estimating with reconstructed swe)
+* domain directory, e.g. idwy, that will contain information specific to the domain
+* a csv file of the dates you are interested in. This can have any filename, and you will provide the exact name and location later
+
+## modscag_downloads
+
+There are 2 options. Either download the files yourself before running the model, or allow the package to download them for you. 
+
+*Option 1*
+
+You can copy the correct modscag date directories from snowserver `/data/hydroData/WestUS_Data/MODSCAG/modscag-historic/` and the package will skip the download. The structure of the modscag-downloads directory should be:
+* year
+*	3 digit day of year
+* geotiff modscag files with names ending in `snow_fraction.tif`
+
+The package will mosaic these files and crop them for your domain. The processed fsca files will be placed in the folder `data/fsca` inside the domain directory.
+
+
+*Option 2*
+
+The package will download them for you after checking to make sure the files don't exist. This option requires some setup of ssh on yoru computer. The data for this directory will be automatically downloaded from snow server over ssh (with scp) but you need setup a ssh key file. google to troubleshoot if needed but here is an overview (I've only done this on MacOS. I assume linux is the same. I think for Windows you'll need Cygwin or MobaXTerm or alike):
+
+1. create a directory in your user home called `.ssh`
+
+2. run `ssh-keygen` in terminal (anywhere)
+	+ if it asks for the file in which to save the key make sure it gets saved to /Users/<username>/.ssh/snowserver_rsa
+	+ if it asks for a passphrase just hit enter for none.
+	
+3. run `ssh-copy-id -i ~/.ssh/snowserver_rsa.pub snowserver.colorado.edu` 
+
+4. try ssh'ing to snowserver. it should work without a password.
+	+ check to make sure the snowserver_rsa was added to ~/.ssh/authorized_keys 
+	+ NB: I had to use `ssh snowserver.colorado.edu -i ~/.ssh/snowserver_rsa` which then prompted me for my key passphrase (which we set to none). I think this confuses the mac because it can't store nothing in the keychain. I hit enter a couple times and then it worked the following ssh attempt. Importantly, after logging in you should see: `Identity added: /Users/dosc3612/.ssh/snowserver_rsa ((null)`
+	+ if not, try `chmod 700 .ssh` on your .ssh folder on snowserver
+	+ also try `chmod 600 .ssh/snowserver_rsa` on your computer to set the permissions
+	+ or, recreate the ssh key with a passphrase (rather than not having one)
+	
+*NB: make sure your username is the same on your local machine and snowserver. otherwise you will need to replace `snowserver.colorado.edu` with `<sslogin>@snowserver.colorado.edu`
+
+## rcn_<location>
+
+The directory name should reflect the model domain name of the reconstruction. This is not necessarily the same domain as the regression (the regression domain must be contained within the reconstruction domain, i.e. the regression domain can be smaller). The directory should contain 1 netcdf file per reconstructed year. Each netcdf filename should begin with "recondata", followed by "_", and then 4-digit year and the extension ".nc". For example: recondata_ucrb_2000.nc but you can have anything you need between "recondata" and "yyyy.nc". It should consist of 1 variable "swe" (meters) and 3 dimensions: longitude, latitude, and time where time is day in format YYYYMMDD.
+
+If the reconstruction grid is different from the regression grid then the reconstruction will need to be resampled/cropped to be the same as the fsca and phv variables.
+
+If you are using the output from [snodis](https://github.com/hoargroup/snodis), you may be interestd [these conversion scripts](https://github.com/hoargroup/example_sweRegression/tree/master/convert_snodisoutput).
+
+## domain directory
+
+You will need to create a `data` subdirectory. Inside `data` you will need to create `phv` and `gis`. 
+
+`phv` contains static predictor variables that you must provide to the model. For a domain name of `idwy`, they must be labeled `idwy_dem.tif` (for elevation). The package will use all geotif files in this folder and parse the name based on the underscore. 
+
+`gis` needs to have a watermask named `IDWY_watermask.tif`. This will be used to mask areas that are bodies of water from the estimates. You need to make sure this is on the same grid as the geotiffs in `phv`. One option is to use the MOD44W product from NASA.
+
+Upon runing the model, 2 additional subfolders (`snoteldownloads` and `fsca`) will be created in the `data` directory. 
+
+An `output` folder will also be created in the domain directory with the results from the model
+
+The resulting folder structure is therefore:
+
+* working directory
+	* idwy (user created)
+		* data (user created)
+			* phv (user created)
+			* gis (user created)
+			* snoteldownloads -> (auto created) the model will download the relevant snotel data here
+			* fsca -> (auto created) the processed modscag files will be written here
+			* output -> (auto created) the SWE distribution results will be written here
+	* rcn_<location> (user created, optional depending on whether rcn is used as a predictor)
+		
+I have an r script to make the phv geotif files. There is [another vignette](Make_PHV_Inputs.html) with this information.
+
+
+## csv datefile
+
+There should be a single column with a header called `dte` and the date format should be `YYYY-mm-dd`. You will provide the name of this file to run the model.
+        
+
+# Run the model
+
+see an [example run file](https://github.com/hoargroup/example_sweRegression/blob/master/run_ucrb.R) on github. Here is a [plain text version](https://raw.githubusercontent.com/hoargroup/example_sweRegression/master/run_ucrb.R) you can copy as a template.
+
+# Model outputs
+
+There are 6 outputs. They are written to an `output` folder (and optionally within another subfolder, in my case `w_obscuredstations`) inside `data`.
+
+1. The SWE maps will be written as geotifs.  They are labeled phvfsca_<date>.tif and will have the same gridding as the input PHV variables. SWE is in meters.
+
+2. The SNOTEL observations for each model date are saved as geopackages. These can be loaded into any GIS system to view the SNOTEL values.
+
+3. The model coefficients are written to a separate file for each date. The files are called phvfsca_coefs_<yyyymmdd>.txt.
+
+4. The cross-validated MAE as a percent of observed SWE are written to a separate text file in a subfolder called  `crossval_stats_dates` for each date called phvfsca_pctmae_<yyyymmdd>.txt. There is also a combined file called phvfsca_pctmae_crossval.txt at the same level as `crossval_stats_dates`.
+
+5. The cross-validated r^2 are written to a separate text file in a subfolder called  `crossval_stats_dates` for each date called phvfsca_r2_<yyyymmdd>.txt. There is also a combined file called phvfsca_r2_crossval.txt at the same level as `crossval_stats_dates`.
+
+6. Graphics of the modeled SWE and fsca are plotted and saved to `swe_fsca_sidexside` inside `output/w_obscuredstations`. The files are labeled maps_<yyyymmdd>.png
